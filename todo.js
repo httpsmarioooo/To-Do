@@ -1,71 +1,37 @@
-// agarrar los elementos del HTML
-const input = document.getElementById("nuevaTarea");
-const btnAgregar = document.getElementById("btnAgregar");
-const lista = document.getElementById("listaTareas");
-const mensaje = document.getElementById("mensaje");
+const input = document.getElementById('nuevaTarea');
+const btnAgregar = document.getElementById('btnAgregar');
+const lista = document.getElementById('listaTareas');
+const mensaje = document.getElementById('mensaje');
 
-// agarrar tareas guardadas o poner una lista vacía
-let tareas = JSON.parse(localStorage.getItem("tareas")) || [];
+btnAgregar.addEventListener('click', () => {
+    const texto = input.value.trim();
 
-// función para guardar las tareas en el localStorage
-function guardarTareas() {
-    localStorage.setItem("tareas", JSON.stringify(tareas));
-}
-
-// función para crear el <li> con su contenido y botones
-function crearTarea(texto, completada = false) {
-    const li = document.createElement("li");
-
-    const span = document.createElement("span");
-    span.textContent = texto;
-
-    if (completada) {
-        span.classList.add("completada");
+    if (texto === '') {
+        mensaje.textContent = 'Debes escribir una tarea.';
+        return;
     }
 
-    const btnEliminar = document.createElement("button");
-    btnEliminar.textContent = "Eliminar";
+    mensaje.textContent = '';
+    const li = document.createElement('li');
 
-    // al hacer click en el texto se marca o desmarca
-    span.addEventListener("click", function () {
-        span.classList.toggle("completada");
+    const span = document.createElement('span');
+    span.textContent = texto;
 
-        let tarea = tareas.find(t => t.texto === texto);
-        if (tarea) {
-            tarea.completada = !tarea.completada;
-            guardarTareas();
-        }
+    const btnEliminar = document.createElement('button');
+    btnEliminar.textContent = 'Eliminar';
+
+    // Funcionalidad para tachar al hacer clic en el texto
+    span.addEventListener('click', () => {
+        span.classList.toggle('completada');
     });
 
-    // eliminar tarea al dar click en el botón
-    btnEliminar.addEventListener("click", function () {
+    // Funcionalidad para eliminar
+    btnEliminar.addEventListener('click', () => {
         lista.removeChild(li);
-        tareas = tareas.filter(t => t.texto !== texto);
-        guardarTareas();
     });
 
     li.appendChild(span);
     li.appendChild(btnEliminar);
     lista.appendChild(li);
-}
-
-// mostrar tareas ya guardadas
-tareas.forEach(tarea => crearTarea(tarea.texto, tarea.completada));
-
-// cuando le den click a "Agregar"
-btnAgregar.addEventListener("click", function () {
-    const texto = input.value.trim();
-
-    if (texto === "") {
-        mensaje.textContent = "Por favor escribe una tarea";
-        return;
-    }
-
-    mensaje.textContent = "";
-
-    crearTarea(texto);
-    tareas.push({ texto: texto, completada: false });
-    guardarTareas();
-
-    input.value = "";
+    input.value = '';
 });
